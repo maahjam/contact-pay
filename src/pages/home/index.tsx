@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { PaginatedContactsList } from "./types";
 import Search from "../../components/search";
 import Loading from "../../components/loading";
+import NotFound from "../../components/notFound";
+import ErrorMessage from "../../components/error";
 
 const Home: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -15,6 +17,8 @@ const Home: React.FC = () => {
     queryKey: ["contacts"],
     queryFn: () => fetchContacts({ skip: currentPage, query: query }),
   });
+
+  const hasContact = data?.items.length;
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -50,7 +54,8 @@ const Home: React.FC = () => {
           </div>
         </div>
       )}
-
+      {!hasContact && <NotFound />}
+      {error && <ErrorMessage errorMessage={error.message} />}
       <Pagination
         totalPages={(data as PaginatedContactsList)?.pager.totalPages}
         currentPage={currentPage}
