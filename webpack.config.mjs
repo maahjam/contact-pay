@@ -18,11 +18,15 @@ const config = {
       },
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"],
+        use: ["style-loader", "css-loader", "postcss-loader"],
       },
     ],
   },
   resolve: {
+    // alias: {
+    //   '@pages': path.resolve(__dirname, 'src/pages/'),
+    //   '@components': path.resolve(__dirname, 'src/components/'),
+    // },
     extensions: [".tsx", ".ts", ".js"],
   },
   output: {
