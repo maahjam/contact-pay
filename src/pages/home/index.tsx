@@ -8,33 +8,42 @@ import Search from "../../components/search";
 import Loading from "../../components/loading";
 import NotFound from "../../components/notFound";
 import ErrorMessage from "../../components/error";
+import useStore from "./store";
+import { ContactType } from "../../types/contact";
+import useDebounce from "../../hooks/useDebounce";
 
 const Home: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [query, setQuery] = useState<string>("");
+  const { setContacts, contacts, frequentlyVisited } = useStore(
+    (state) => state,
+  );
 
   const { data, refetch, isLoading, error } = useQuery({
     queryKey: ["contacts"],
     queryFn: () => fetchContacts({ skip: currentPage, query: query }),
   });
+  
+  const hasContacts = data?.items.length;
+  const debouncedRefetch = useDebounce(refetch, 500);
 
-  const hasContact = data?.items.length;
+  const handlePageChange = (page: number) => setCurrentPage(page);
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
+  const handleOnSearch = (query: string) => setQuery(query);
 
-  const handleOnSearch = (query: string) => {
-    setQuery(query);
-  };
+  const handleClearSearch = () => setQuery("");
 
   useEffect(() => {
-    refetch();
-  }, [query, currentPage]);
+    if (data?.items) setContacts(data?.items as ContactType[]);
+  }, [data?.items]);
 
-  const handleClearSearch = () => {
-    setQuery("");
-  };
+  useEffect(() => {
+    debouncedRefetch();
+  }, [query, currentPage]);
+  
+
+  if (isLoading) return <Loading />;
+  if (error) return <ErrorMessage errorMessage={error.message} />;
 
   return (
     <>
@@ -43,19 +52,17 @@ const Home: React.FC = () => {
         handleOnSearch={handleOnSearch}
         handleClearSearch={handleClearSearch}
       />
-      {isLoading ? (
-        <Loading />
-      ) : (
+      {hasContacts ? (
         <div className="mx-auto p-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {data?.items.map((contact) => (
+            {contacts.map((contact) => (
               <Contact key={contact.id} contact={contact} />
             ))}
           </div>
         </div>
+      ) : (
+        <NotFound />
       )}
-      {!hasContact && <NotFound />}
-      {error && <ErrorMessage errorMessage={error.message} />}
       <Pagination
         totalPages={(data as PaginatedContactsList)?.pager.totalPages}
         currentPage={currentPage}

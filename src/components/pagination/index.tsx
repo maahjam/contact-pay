@@ -24,19 +24,19 @@ const Pagination: React.FC<PaginationProps> = ({
   };
 
   return (
-    <div className="flex justify-center items-center space-x-4 my-4">
+    <div className="flex justify-center items-center space-x-4 my-10">
       <button
         onClick={handlePrevious}
         disabled={currentPage === 1}
-        className="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-blue-300 w-36"
+        className="px-4 py-2 bg-green-400 text-white rounded disabled:bg-green-200 w-36"
       >
         Previous
       </button>
-      <span className="text-lg">{`Page ${currentPage} of ${totalPages}`}</span>
+      <span className="text-lg font-medium text-zinc-600">{`Page ${currentPage} of ${totalPages}`}</span>
       <button
         onClick={handleNext}
         disabled={currentPage === totalPages}
-        className="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-blue-300 w-36"
+        className="px-4 py-2 bg-green-400 text-white rounded disabled:bg-green-200 w-36"
       >
         Next
       </button>
