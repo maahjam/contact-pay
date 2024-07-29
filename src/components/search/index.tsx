@@ -15,12 +15,12 @@ const Search: React.FC<Props> = ({ handleOnSearch, query, handleClearSearch }) =
         type="text"
         value={query}
         onChange={onSearchChange}
-        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-        placeholder="Search..."
+        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-slate-400"
+        placeholder="Search by phone number, name, or last name"
       />
        <button
         onClick={handleClearSearch}
-        className="px-4 py-2 bg-gray-300 text-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="px-4 py-2 bg-gray-300 text-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-slate-400"
       >
         Clear
       </button>

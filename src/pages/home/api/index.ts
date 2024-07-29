@@ -7,35 +7,30 @@ export const fetchContacts = async (
 ): Promise<PaginatedContactsList> => {
   const { query, limit = 10, skip } = queryParams;
 
-  console.log({ query });
-
   let firstName = "";
   let lastName = "";
   let phone = "";
 
   if (query) {
     if (/^\d+$/.test(query)) {
-      // Query is a number, treat it as phone
       phone = query;
     } else if (query.includes(" ")) {
-      // Query contains space, split into first name and last name
-      const [first, ...rest] = query.split(" ");
+      const [first, ...last] = query.split(" ");
       firstName = first;
-      lastName = rest.join(" ");
+      lastName = last.join("");
     } else {
-      // Query is a single word, treat it as first name
       firstName = query;
     }
   }
 
   const whereClause = {
-    first_name: { contains: firstName },
-    last_name: { contains: lastName },
-    phone: { contains: phone },
+    ...(firstName && { first_name: { contains: firstName } }),
+    ...(lastName && { last_name: { contains: lastName } }),
+    ...(phone && { phone: { contains: phone } }),
   };
 
   const params = new URLSearchParams({
-    where: JSON.stringify(whereClause),
+    ...(query && { where: JSON.stringify(whereClause) }),
     sort: "createdAt DESC",
     limit: limit.toString(),
     skip: skip.toString(),

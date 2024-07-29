@@ -1,9 +1,5 @@
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import { defaultResponseTransformer } from '../transformers/defaultTransformers';
+import axios, { AxiosInstance } from 'axios';
 
-interface TransformerConfig {
-  responseTransformer?: (data: any) => any;
-}
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: 'http://localhost:1337/', 
