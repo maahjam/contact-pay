@@ -7,23 +7,24 @@ interface Props {
   contact: ContactType;
 }
 
-export const Contact: React.FC<Props> = ({ contact }) => {
+export const RecentVisited: React.FC<Props> = ({ contact }) => {
   const navigate = useNavigate();
-  const { setRecentVisited, recentVisited, recentVisitedQueue } = useStore(
-    (state) => state,
-  );
+  const { updateRecentVisitedQue, recentVisitedQueue } = useStore((state) => state);
 
   const handleContactClick = () => {
     // navigate(`/contacts/${contact.id}`);
-    setRecentVisited(contact);
+    updateRecentVisitedQue(contact);
   };
 
+
+  console.log({recentVisitedQueue});
+  
   return (
     <div
       className="flex flex-col justify-between items-center shadow-md bg-green-200 rounded-md mb-4 cursor-pointer"
       onClick={handleContactClick}
     >
-      <div className="flex justify-center w-52 h-52 items-center border-4 border-green-600 rounded-full mt-2">
+      <div className="flex justify-center w-24 h-24 items-center border-4 border-green-600 rounded-full mt-2">
         <img
           className="object-cover rounded-full"
           src={contact.avatar}

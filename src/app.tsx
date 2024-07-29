@@ -29,8 +29,8 @@ const App: React.FC = () => {
     <QueryClientProvider client={queryClient}>
       <Router>
         <Routes>
+          <Route path="/contacts/:contactId" element={<ContactDetail />}  />
           <Route path="/contacts" element={<Home />} />
-          <Route path="/contacts/:contactId" element={<ContactDetail />} />
           <Route path="/" element={<Navigate to="/contacts" replace />} />
         </Routes>
       </Router>

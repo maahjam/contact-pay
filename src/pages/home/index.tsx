@@ -11,11 +11,24 @@ import ErrorMessage from "../../components/error";
 import useStore from "./store";
 import { ContactType } from "../../types/contact";
 import useDebounce from "../../hooks/useDebounce";
+import { useSearchParams } from "react-router-dom";
+import { RecentVisited } from "./components/recentVisited";
 
 const Home: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [query, setQuery] = useState<string>("");
-  const { setContacts, contacts, frequentlyVisited } = useStore(
+  const DEFAULT_PAGE_NUMBER = 1;
+  const DEFAULT_QUERY_VALUE = "";
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialPage = parseInt(
+    searchParams.get("page") || DEFAULT_PAGE_NUMBER.toString(),
+    10,
+  );
+  const initialQuery = searchParams.get("query") || DEFAULT_QUERY_VALUE;
+
+  const [currentPage, setCurrentPage] = useState<number>(initialPage);
+  const [query, setQuery] = useState<string>(initialQuery);
+
+  const { setContacts, contacts, recentVisited, recentVisitedQueue } = useStore(
     (state) => state,
   );
 
@@ -23,24 +36,36 @@ const Home: React.FC = () => {
     queryKey: ["contacts"],
     queryFn: () => fetchContacts({ skip: currentPage, query: query }),
   });
-  
-  const hasContacts = data?.items.length;
-  const debouncedRefetch = useDebounce(refetch, 500);
 
-  const handlePageChange = (page: number) => setCurrentPage(page);
+  const hasContact = contacts.length;
+  const hasVisitedContacts = recentVisitedQueue.length > 0;
 
-  const handleOnSearch = (query: string) => setQuery(query);
+  const debouncedValue = useDebounce(query, 500);
 
-  const handleClearSearch = () => setQuery("");
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    setSearchParams({ page: page.toString() });
+  };
+
+  const handleOnSearch = (newQuery: string) => {
+    setQuery(newQuery);
+    setCurrentPage(DEFAULT_PAGE_NUMBER);
+    setSearchParams({ page: DEFAULT_PAGE_NUMBER.toString(), query: newQuery });
+  };
+
+  const handleClearSearch = () => {
+    setQuery(DEFAULT_QUERY_VALUE);
+    setCurrentPage(DEFAULT_PAGE_NUMBER);
+    setSearchParams({ page: DEFAULT_PAGE_NUMBER.toString() });
+  };
 
   useEffect(() => {
     if (data?.items) setContacts(data?.items as ContactType[]);
   }, [data?.items]);
 
   useEffect(() => {
-    debouncedRefetch();
-  }, [query, currentPage]);
-  
+    refetch();
+  }, [currentPage, debouncedValue]);
 
   if (isLoading) return <Loading />;
   if (error) return <ErrorMessage errorMessage={error.message} />;
@@ -52,12 +77,29 @@ const Home: React.FC = () => {
         handleOnSearch={handleOnSearch}
         handleClearSearch={handleClearSearch}
       />
-      {hasContacts ? (
+
+      {hasVisitedContacts && (
+        <div className="mx-auto p-4 mb-5">
+          <p className="text-zinc-600 font-bold text-xl my-4">
+            Recent visited contacts
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {recentVisitedQueue.map((contact) => (
+              <RecentVisited key={contact.id} contact={contact} />
+            ))}
+          </div>
+          <div className="border mx-4"></div>
+        </div>
+      )}
+
+      {hasContact ? (
         <div className="mx-auto p-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {contacts.map((contact) => (
-              <Contact key={contact.id} contact={contact} />
-            ))}
+            {contacts
+              .filter((item) => !(item.id in recentVisited))
+              .map((contact) => (
+                <Contact key={contact.id} contact={contact} />
+              ))}
           </div>
         </div>
       ) : (
