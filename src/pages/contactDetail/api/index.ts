@@ -1,5 +1,5 @@
-import axiosInstance from "../../../services/axios";
-import { ContactType } from "../../../types/contact";
+import axiosInstance from "@services/axios";
+import { ContactType } from "@type/contact";
 import { getContactDetailTransformer } from "../transformers";
 
 export const fetchContactDetail = async (id: string): Promise<ContactType> => {

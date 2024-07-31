@@ -1,3 +1,5 @@
+import defaultAvatar from "@assets/defaultAvatar.jpg";
+
 import { PaginatedContactsList } from "../types";
 
 const getContactListTransformer = (data: any): PaginatedContactsList => {
@@ -11,9 +13,9 @@ const getContactListTransformer = (data: any): PaginatedContactsList => {
       phone: item.phone,
       note: item.note,
       telegram: item.telegram,
-      avatar: item.avatar,
+      avatar: item.avatar || defaultAvatar,
       company: item.company,
-      address: item.address,
+      address: item.address || "Silicon valley",
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
     })),

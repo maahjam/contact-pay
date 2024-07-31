@@ -1,32 +1,38 @@
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+
 import { fetchContacts } from "./api";
 import { Contact } from "./components/contact";
-import Pagination from "../../components/pagination";
-import { useEffect, useState } from "react";
-import { PaginatedContactsList } from "./types";
-import Search from "../../components/search";
-import Loading from "../../components/loading";
-import NotFound from "../../components/notFound";
-import ErrorMessage from "../../components/error";
 import useStore from "./store";
-import { ContactType } from "../../types/contact";
-import useDebounce from "../../hooks/useDebounce";
-import { useSearchParams } from "react-router-dom";
 import { RecentVisited } from "./components/recentVisited";
+import { PaginatedContactsList, QueryPageState } from "./types";
+
+import Pagination from "@components/pagination";
+import Search from "@components/search";
+import Loading from "@components/loading";
+import NotFound from "@components/notFound";
+import ErrorMessage from "@components/error";
+import { ContactType } from "@type/contact";
+import useDebounce from "@hooks/useDebounce";
+
+const DEFAULT_PAGE_NUMBER = 1;
+const DEFAULT_QUERY_VALUE = "";
 
 const Home: React.FC = () => {
-  const DEFAULT_PAGE_NUMBER = 1;
-  const DEFAULT_QUERY_VALUE = "";
-
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialPage = parseInt(
-    searchParams.get("page") || DEFAULT_PAGE_NUMBER.toString(),
-    10,
-  );
-  const initialQuery = searchParams.get("query") || DEFAULT_QUERY_VALUE;
 
-  const [currentPage, setCurrentPage] = useState<number>(initialPage);
-  const [query, setQuery] = useState<string>(initialQuery);
+  const initialState = {
+    currentPage: parseInt(
+      searchParams.get("page") || DEFAULT_PAGE_NUMBER.toString(),
+      10,
+    ),
+    query: searchParams.get("query") || DEFAULT_QUERY_VALUE,
+  };
+
+  const [pageQueryState, setPageQueryState] =
+    useState<QueryPageState>(initialState);
+  const debouncedValue = useDebounce(pageQueryState.query, 500);
 
   const { setContacts, contacts, recentVisited, recentVisitedQueue } = useStore(
     (state) => state,
@@ -34,28 +40,34 @@ const Home: React.FC = () => {
 
   const { data, refetch, isLoading, error } = useQuery({
     queryKey: ["contacts"],
-    queryFn: () => fetchContacts({ skip: currentPage, query: query }),
+    queryFn: () =>
+      fetchContacts({
+        skip: pageQueryState.currentPage,
+        query: pageQueryState.query,
+      }),
   });
 
-  const hasContact = contacts.length;
-  const hasVisitedContacts = recentVisitedQueue.length > 0;
-
-  const debouncedValue = useDebounce(query, 500);
-
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    setSearchParams({ page: page.toString() });
+    setPageQueryState((prevState) => ({
+      ...prevState,
+      currentPage: page,
+    }));
+    setSearchParams({
+      page: page.toString(),
+      ...(pageQueryState.query && { query: pageQueryState.query }),
+    });
   };
 
-  const handleOnSearch = (newQuery: string) => {
-    setQuery(newQuery);
-    setCurrentPage(DEFAULT_PAGE_NUMBER);
+  const handleSearch = (newQuery: string) => {
+    setPageQueryState({ query: newQuery, currentPage: DEFAULT_PAGE_NUMBER });
     setSearchParams({ page: DEFAULT_PAGE_NUMBER.toString(), query: newQuery });
   };
 
   const handleClearSearch = () => {
-    setQuery(DEFAULT_QUERY_VALUE);
-    setCurrentPage(DEFAULT_PAGE_NUMBER);
+    setPageQueryState({
+      query: DEFAULT_QUERY_VALUE,
+      currentPage: DEFAULT_PAGE_NUMBER,
+    });
     setSearchParams({ page: DEFAULT_PAGE_NUMBER.toString() });
   };
 
@@ -65,7 +77,10 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     refetch();
-  }, [currentPage, debouncedValue]);
+  }, [pageQueryState.currentPage, debouncedValue]);
+
+  const hasContact = contacts.length;
+  const hasVisitedContacts = recentVisitedQueue.length > 0;
 
   if (isLoading) return <Loading />;
   if (error) return <ErrorMessage errorMessage={error.message} />;
@@ -73,8 +88,8 @@ const Home: React.FC = () => {
   return (
     <>
       <Search
-        query={query}
-        handleOnSearch={handleOnSearch}
+        query={pageQueryState.query}
+        handleSearch={handleSearch}
         handleClearSearch={handleClearSearch}
       />
 
@@ -107,7 +122,7 @@ const Home: React.FC = () => {
       )}
       <Pagination
         totalPages={(data as PaginatedContactsList)?.pager.totalPages}
-        currentPage={currentPage}
+        currentPage={pageQueryState.currentPage}
         handlePageChange={handlePageChange}
       />
     </>

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "es5",
     "module": "CommonJS",
     "jsx": "react-jsx",
@@ -9,7 +10,15 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./build",
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "paths": {
+      "@pages/*": ["./src/pages/*"],
+      "@components/*": ["./src/components/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@type/*": ["src/type/*"],
+      "@services/*": ["./src/services/*"],
+      "@assets/*": ["./src/assets/*"]
+    }
   },
   "include": ["src"],
   "exclude": ["node_modules"]

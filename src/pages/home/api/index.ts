@@ -1,4 +1,5 @@
-import axiosInstance from "../../../services/axios";
+import axiosInstance from "@services/axios";
+
 import { PaginatedContactsList, QueryParams } from "../types";
 import { getContactListTransformer } from "../transformers";
 
@@ -12,14 +13,15 @@ export const fetchContacts = async (
   let phone = "";
 
   if (query) {
-    if (/^\d+$/.test(query)) {
-      phone = query;
-    } else if (query.includes(" ")) {
-      const [first, ...last] = query.split(" ");
+    const trimmedQuery = query.trim();
+    if (/^\d+[\d\s]*\d+$/.test(trimmedQuery)) {
+      phone = trimmedQuery;
+    } else if (trimmedQuery.includes(" ")) {
+      const [first, ...last] = trimmedQuery.split(" ");
       firstName = first;
       lastName = last.join("");
     } else {
-      firstName = query;
+      firstName = trimmedQuery;
     }
   }
 
