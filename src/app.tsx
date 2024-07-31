@@ -1,8 +1,41 @@
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Home from "@pages/home";
+import ContactDetail from "@pages/contactDetail";
 
-export default function App() {
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      refetchInterval: false,
+      refetchIntervalInBackground: false,
+      refetchOnReconnect: false,
+      refetchOnMount: false,
+    },
+    mutations: {
+      retry: false,
+    },
+  },
+});
+
+const App: React.FC = () => {
   return (
-    <main>
-      <p className="bg-slate-500 text-6xl">App</p>
-    </main>
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <Routes>
+          <Route path="/contacts/:contactId" element={<ContactDetail />}  />
+          <Route path="/contacts" element={<Home />} />
+          <Route path="/" element={<Navigate to="/contacts" replace />} />
+        </Routes>
+      </Router>
+    </QueryClientProvider>
   );
-}
+};
+
+export default App;
