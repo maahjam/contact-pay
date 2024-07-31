@@ -1,4 +1,4 @@
-import axiosInstance from "../../../services/axios";
+import axiosInstance from "@services/axios";
 import { PaginatedContactsList, QueryParams } from "../types";
 import { getContactListTransformer } from "../transformers";
 
@@ -13,8 +13,9 @@ export const fetchContacts = async (
 
   if (query) {
     if (/^\d+$/.test(query)) {
+      // FIXME: regex has a edge case
       phone = query;
-    } else if (query.includes(" ")) {
+    } else if (query.trim().includes(" ")) {
       const [first, ...last] = query.split(" ");
       firstName = first;
       lastName = last.join("");

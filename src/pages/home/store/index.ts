@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { ContactType } from "../../../types/contact";
+import { ContactType } from "@type/contact";
 
 interface State {
   contacts: ContactType[];
@@ -10,7 +10,7 @@ interface State {
 interface Actions {
   setContacts: (contacts: ContactType[]) => void;
   setRecentVisited: (contact: ContactType) => void;
-  updateRecentVisitedQue: (contact: ContactType) => void;
+  updateRecentVisitedQueue: (contact: ContactType) => void;
 }
 
 type Store = State & Actions;
@@ -50,7 +50,7 @@ const useStore = create<Store>((set) => ({
         recentVisited: { ...state.recentVisited, [contact.id]: contact },
       };
     }),
-  updateRecentVisitedQue: (contact) =>
+  updateRecentVisitedQueue: (contact) =>
     set((state) => {
       const newQueue = state.recentVisitedQueue.filter(item => item.id !== contact.id);
       newQueue.push(contact);

@@ -1,4 +1,4 @@
-import { ContactType } from "../../../types/contact";
+import { ContactType } from "@type/contact";
 export interface PaginatedContactsList {
   items: ContactType[];
   pager: {

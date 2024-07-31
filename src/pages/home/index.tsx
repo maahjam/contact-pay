@@ -1,24 +1,25 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchContacts } from "./api";
 import { Contact } from "./components/contact";
-import Pagination from "../../components/pagination";
+import Pagination from "@components/pagination";
 import { useEffect, useState } from "react";
 import { PaginatedContactsList } from "./types";
-import Search from "../../components/search";
-import Loading from "../../components/loading";
-import NotFound from "../../components/notFound";
-import ErrorMessage from "../../components/error";
+import Search from "@components/search";
+import Loading from "@components/loading";
+import NotFound from "@components/notFound";
+import ErrorMessage from "@components/error";
 import useStore from "./store";
-import { ContactType } from "../../types/contact";
-import useDebounce from "../../hooks/useDebounce";
+import { ContactType } from "@type/contact";
+import useDebounce from "@hooks/useDebounce";
 import { useSearchParams } from "react-router-dom";
 import { RecentVisited } from "./components/recentVisited";
 
-const Home: React.FC = () => {
-  const DEFAULT_PAGE_NUMBER = 1;
-  const DEFAULT_QUERY_VALUE = "";
+const DEFAULT_PAGE_NUMBER = 1;
+const DEFAULT_QUERY_VALUE = "";
 
+const Home: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+
   const initialPage = parseInt(
     searchParams.get("page") || DEFAULT_PAGE_NUMBER.toString(),
     10,
@@ -36,9 +37,6 @@ const Home: React.FC = () => {
     queryKey: ["contacts"],
     queryFn: () => fetchContacts({ skip: currentPage, query: query }),
   });
-
-  const hasContact = contacts.length;
-  const hasVisitedContacts = recentVisitedQueue.length > 0;
 
   const debouncedValue = useDebounce(query, 500);
 
@@ -66,6 +64,9 @@ const Home: React.FC = () => {
   useEffect(() => {
     refetch();
   }, [currentPage, debouncedValue]);
+
+  const hasContact = contacts.length;
+  const hasVisitedContacts = recentVisitedQueue.length > 0;
 
   if (isLoading) return <Loading />;
   if (error) return <ErrorMessage errorMessage={error.message} />;

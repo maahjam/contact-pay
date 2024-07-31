@@ -1,7 +1,7 @@
 import React from "react";
-import { ContactType } from "../../../../types/contact";
+import { ContactType } from "@type/contact";
 import { useNavigate } from "react-router";
-import useStore from "../../store";
+import useStore from "@pages/home/store";
 
 interface Props {
   contact: ContactType;
@@ -9,12 +9,12 @@ interface Props {
 
 export const Contact: React.FC<Props> = ({ contact }) => {
   const navigate = useNavigate();
-  const { setRecentVisited, recentVisited, recentVisitedQueue } = useStore(
+  const { setRecentVisited } = useStore(
     (state) => state,
   );
 
   const handleContactClick = () => {
-    // navigate(`/contacts/${contact.id}`);
+    navigate(`/contacts/${contact.id}`);
     setRecentVisited(contact);
   };
 

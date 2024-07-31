@@ -1,4 +1,4 @@
-import { ContactType } from "../../../types/contact";
+import { ContactType } from "@type/contact";
 
 const getContactDetailTransformer = (data: any): ContactType => {
   return {

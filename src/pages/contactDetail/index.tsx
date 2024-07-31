@@ -2,8 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchContactDetail } from "./api";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
-import Loading from "../../components/loading";
-import ErrorMessage from "../../components/error";
+import Loading from "@components/loading";
+import ErrorMessage from "@components/error";
 
 const ContactDetail: React.FC = () => {
   const { contactId } = useParams();
@@ -21,6 +21,7 @@ const ContactDetail: React.FC = () => {
   useEffect(() => {
     refetch();
   }, [contactId]);
+
 
   if (isLoading) return <Loading />;
   if (error) return <ErrorMessage errorMessage={error.message} />;
