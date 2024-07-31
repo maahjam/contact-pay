@@ -1,12 +1,16 @@
 interface Props {
   query: string;
-  handleOnSearch: (query: string) => void;
+  handleSearch: (query: string) => void;
   handleClearSearch: () => void;
 }
 
-const Search: React.FC<Props> = ({ handleOnSearch, query, handleClearSearch }) => {
-  const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleOnSearch(e.target.value);
+const Search: React.FC<Props> = ({
+  handleSearch,
+  query,
+  handleClearSearch,
+}) => {
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleSearch(e.target.value);
   };
 
   return (
@@ -14,11 +18,11 @@ const Search: React.FC<Props> = ({ handleOnSearch, query, handleClearSearch }) =
       <input
         type="text"
         value={query}
-        onChange={onSearchChange}
+        onChange={handleSearchChange}
         className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-slate-400"
         placeholder="Search by phone number, name, or last name"
       />
-       <button
+      <button
         onClick={handleClearSearch}
         className="px-4 py-2 bg-gray-300 text-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-slate-400"
       >

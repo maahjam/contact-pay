@@ -58,7 +58,7 @@ const Home: React.FC = () => {
     });
   };
 
-  const handleOnSearch = (newQuery: string) => {
+  const handleSearch = (newQuery: string) => {
     setPageQueryState({ query: newQuery, currentPage: DEFAULT_PAGE_NUMBER });
     setSearchParams({ page: DEFAULT_PAGE_NUMBER.toString(), query: newQuery });
   };
@@ -89,7 +89,7 @@ const Home: React.FC = () => {
     <>
       <Search
         query={pageQueryState.query}
-        handleOnSearch={handleOnSearch}
+        handleSearch={handleSearch}
         handleClearSearch={handleClearSearch}
       />
 
