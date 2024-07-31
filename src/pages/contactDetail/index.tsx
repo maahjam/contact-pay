@@ -1,7 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
-import { fetchContactDetail } from "./api";
-import { useParams } from "react-router-dom";
 import { useEffect } from "react";
+
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
+
+import { fetchContactDetail } from "./api";
 import Loading from "@components/loading";
 import ErrorMessage from "@components/error";
 
@@ -22,7 +24,6 @@ const ContactDetail: React.FC = () => {
     refetch();
   }, [contactId]);
 
-
   if (isLoading) return <Loading />;
   if (error) return <ErrorMessage errorMessage={error.message} />;
 
@@ -38,7 +39,7 @@ const ContactDetail: React.FC = () => {
             />
           </div>
           <p className="text-zinc-600 font-medium mt-4">
-            Telegram ID: {contact?.telegram || "Robot"}
+            Telegram ID: {contact?.telegram}
           </p>
         </div>
 
@@ -52,7 +53,7 @@ const ContactDetail: React.FC = () => {
           <div className="mt-4 flex flex-col items-center md:flex-row md:justify-between font-medium text-md text-zinc-600">
             <p className="mt-2">Phone: {contact?.phone}</p>
             <p className="mt-2">Company: {contact?.company}</p>
-            <p className="mt-2">Email: {contact?.email || "robot@gmail.com"}</p>
+            <p className="mt-2">Email: {contact?.email}</p>
           </div>
         </div>
       </div>

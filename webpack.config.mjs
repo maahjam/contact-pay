@@ -14,18 +14,25 @@ const config = {
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.(jsx|ts)?$/,
         exclude: /node_modules/,
         use: ["babel-loader"],
       },
       {
-        test: /\.tsx?$/,
+        test: /\.(ts|tsx)?$/,
         use: "ts-loader",
         exclude: /node_modules/,
       },
       {
         test: /\.css$/,
         use: ["style-loader", "css-loader", "postcss-loader"],
+      },
+      {
+        test: /\.(png|jpe?g|gif|svg)$/,
+        generator: {
+          filename: 'assets/[name].[contenthash][ext][query]',
+        },
+        use:['file-loader']
       },
     ],
   },
@@ -36,6 +43,7 @@ const config = {
       '@hooks': path.resolve(__dirname, 'src/hooks/'),
       '@type': path.resolve(__dirname, 'src/type/'),
       "@services": path.resolve(__dirname, 'src/services/'),
+      "@assets": path.resolve(__dirname, 'src/assets/'),
     },
 
     modules: [__dirname, "src", "node_modules"],
